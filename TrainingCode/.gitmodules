@@ -1,0 +1,10 @@
+[submodule "submodules/bark-with-voice-clone"]
+	path = submodules/bark-with-voice-clone
+	url = https://github.com/serp-ai/bark-with-voice-clone
+[submodule "submodules/unilm"]
+	path = submodules/unilm
+	url = https://github.com/YuanGongND/unilm/tree/master
+[submodule "submodules/m2d"]
+	path = submodules/m2d
+	url = https://github.com/nttcslab/m2d
+

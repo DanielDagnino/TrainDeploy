@@ -1,0 +1,146 @@
+modifiers:
+  HOME: "{HOME}"
+  BASE_OUT_FOLDER: "{HOME}/MyTmp/TrainDeploy/DeepFakeVoiceDetector/AudioClf:beats/test_{TIME}"
+  BATCH_SIZE: 36
+  NUM_WORKERS: 36
+  MAX_EPOCH: 10
+  RESTART_EPOCH: true
+  N_SAVE_INTER_EPOCH: 1_000_000
+  GRAD_ACCUM: 1
+
+  MODEL_TYPE: "AudioClf"
+  MODEL_NAME: "beats"
+
+  SR: 16_000
+  AUD_LEN_SEC_MAX: 30
+  AUD_LEN_SEC: 3.2
+  SEG_LEN_SEC: 3
+  HOP_LEN_SEC: 1
+  N_SEG_PER_SAMPLE: 1
+
+base_out_folder: "{BASE_OUT_FOLDER}"
+log_dir: "{BASE_OUT_FOLDER}"
+name_save_ckpt: "valid_bark"
+stages_trainer_sorted: ["train", "valid"]
+cnn_benchmark: true
+seed: null
+
+distributed_data_parallel: true
+node_rank: 0
+dist_address: '127.0.0.1:1234'
+world_size: 1
+
+engine:
+  model:
+    name: "{MODEL_TYPE}"
+    half: false
+    find_unused_parameters: true
+    args:
+      n_classes: 1
+      sr: "{SR}"
+      freeze_backbone: false
+      verbose: false
+    backbone:
+      name: "{MODEL_NAME}"
+      args: null
+    resume:
+      pretrained_model_fn: '/media/razor/dagnino/MyBackUpSSD/MyModelsDownload/beats/BEATs_iter3_plus_AS2M_finetuned_on_AS2M_cpt2.pt'
+      save_tmp_model_fn: "{HOME}/MyTmp/TrainDeploy/DeepFakeVoiceDetector/AudioClf:beats/tmp_model.ckpt"
+      load_model_fn: "{HOME}/MyTmp/TrainDeploy/DeepFakeVoiceDetector/AudioClf:beats/tmp_model.ckpt"
+      save_model_dir: "{BASE_OUT_FOLDER}/models"
+      load_optimizer: true
+      load_scheduler: false
+      save_all: true
+      strict: false
+  sync_bn: "torch.float32"
+  input_size_test: [16, 32_000]
+  input_type_test: "torch.float32"
+
+train:
+  n_log_interval: 20
+  n_save_inter_epoch: "{N_SAVE_INTER_EPOCH}"
+  max_epochs: "{MAX_EPOCH}"
+  restart_epoch: "{RESTART_EPOCH}"
+  grad_accum: "{GRAD_ACCUM}"
+  non_blocking: true
+
+clipper:
+  name: "TorchClip"
+  args:
+    max_norm: 4
+
+loader:
+  train:
+    batch_size: "{BATCH_SIZE}"
+    num_workers: "{NUM_WORKERS}"
+    pin_memory: true
+    drop_last: true
+  valid:
+    batch_size: "{BATCH_SIZE}"
+    num_workers: "{NUM_WORKERS}"
+    pin_memory: true
+    drop_last: false
+
+dataset:
+  name: "DatasetAudioMixer"
+  train:
+    # repeat, reduce, paths
+    non_ai_voices_paths: [
+      [1, 1, '/home/razor/MyTmp/TrainDeploy/splits/split_training/non_ai_voices_fns_train.json'],
+      ]
+    ai_voices_paths: [
+      [1, 1, '/home/razor/MyTmp/TrainDeploy/splits/split_training/ai_voices_fns_train_bark.json'],
+    ]
+    noise_paths: [
+      [1, 1, '/home/razor/MyTmp/TrainDeploy/splits/split_training/augment_train.json']
+    ]
+    sample_rate: "{SR}"
+    speed: 0.
+    audio_length_sec: "{AUD_LEN_SEC}"
+    audio_length_sec_max: "{AUD_LEN_SEC_MAX}"
+    segment_length_sec: "{SEG_LEN_SEC}"
+    hop_length_sec: "{HOP_LEN_SEC}"
+    n_segments_per_sample: "{N_SEG_PER_SAMPLE}"
+  valid:
+    non_ai_voices_paths: [
+      [1, 1, '/home/razor/MyTmp/TrainDeploy/splits/split_training/non_ai_voices_fns_train.json']
+    ]
+    ai_voices_paths: [
+      [1, 1, '/home/razor/MyTmp/TrainDeploy/splits/split_training/ai_voices_fns_train_bark.json']
+    ]
+    noise_paths: [
+      [1, 1, '/home/razor/MyTmp/TrainDeploy/splits/split_training/augment_val.json']
+    ]
+    sample_rate: "{SR}"
+    speed: 0.
+    audio_length_sec: "{AUD_LEN_SEC}"
+    audio_length_sec_max: "{AUD_LEN_SEC_MAX}"
+    segment_length_sec: "{SEG_LEN_SEC}"
+    hop_length_sec: "{HOP_LEN_SEC}"
+    n_segments_per_sample: "{N_SEG_PER_SAMPLE}"
+
+optimizer:
+  name: "Adam"
+  args:
+    lr: 0.0001
+    betas: [0.9, 0.999]
+    eps: 1.e-08
+    weight_decay: 0.0001
+
+scheduler:
+  name: "LinearLR"
+  step_scheduler_at_save: false
+  args:
+    start_factor: 1.
+    end_factor: 0.05
+    total_iters: "{MAX_EPOCH}"
+    last_epoch: -1
+
+loss:
+  name: "BinaryCrossEntropyWithLogits"
+  args: null
+
+metric:
+  name: "BinaryAccuracy"
+  args:
+    threshold: 0.5

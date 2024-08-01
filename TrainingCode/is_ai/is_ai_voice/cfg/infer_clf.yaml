@@ -1,0 +1,57 @@
+modifiers:
+  HOME: "{HOME}"
+  BASE_OUT_FOLDER: "{HOME}/MyTmp/TrainDeploy/DeepFakeVoiceDetector/AudioClf:beats/test_{TIME}"
+  BATCH_SIZE: 20
+  NUM_WORKERS: 20
+
+  MODEL_TYPE: "AudioClf"
+  MODEL_NAME: "beats"
+
+  SR: 16_000
+  SEG_LEN_SEC: 3
+  HOP_LEN_SEC: 1
+  SEG_LEN_MAX_SEC: null
+
+base_out_folder: "{BASE_OUT_FOLDER}"
+log_dir: "{BASE_OUT_FOLDER}"
+cnn_benchmark: true
+seed: null
+
+engine:
+  model:
+    name: "{MODEL_TYPE}"
+    half: false
+    args:
+      n_classes: 1
+      sr: "{SR}"
+      freeze_backbone: false
+      verbose: false
+    backbone:
+      name: "{MODEL_NAME}"
+      args: null
+    resume:
+      pretrained_model_fn: '/media/razor/dagnino/MyBackUpSSD/MyModelsDownload/beats/BEATs_iter3_plus_AS2M_finetuned_on_AS2M_cpt2.pt'
+      save_tmp_model_fn: "{HOME}/MyTmp/TrainDeploy/DeepFakeVoiceDetector/AudioClf:beats/tmp_model.ckpt"
+      load_model_fn: "{HOME}/MyTmp/TrainDeploy/DeepFakeVoiceDetector/AudioClf:beats/tmp_model.ckpt"
+      save_model_dir: "{BASE_OUT_FOLDER}/models"
+      load_optimizer: false
+      load_scheduler: false
+      save_all: true
+      strict: true
+
+dataset:
+  name: "DatasetAudioMixerInfer"
+  test:
+    base_dir: "{HOME}/MyData"
+    lbl_to_paths: [
+      ["no_ai", '/home/razor/MyTmp/TrainDeploy/splits/split_training/non_ai_voices_fns_test.json'],
+      ["ai", '/home/razor/MyTmp/TrainDeploy/splits/split_training/ai_voices_fns_test.json'],
+    ]
+    sample_rate: "{SR}"
+    segment_length_sec: "{SEG_LEN_SEC}"
+    segment_length_max_sec: "{SEG_LEN_MAX_SEC}"
+    hop_length_sec: "{HOP_LEN_SEC}"
+loader:
+  test:
+    non_blocking: true
+    batch_size: "{BATCH_SIZE}"

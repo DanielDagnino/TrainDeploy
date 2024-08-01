@@ -1,0 +1,5 @@
+*.git/
+.eggs/
+.pytest_cache/
+.run/
+.idea/

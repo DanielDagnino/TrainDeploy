@@ -1,0 +1,56 @@
+# PyTorch
+torch==2.0.1
+torchaudio==2.0.2
+torchvision==0.15.2
+torch-pitch-shift==1.2.4
+transformers==4.30.2
+tensorboard
+timm==0.9.2
+
+sentencepiece==0.1.99
+#lameenc
+soundfile
+
+einops==0.6.1
+flashy==0.0.2
+xformers==0.0.20
+num2words==0.5.12
+spacy==3.7.2
+
+pandas
+path==16.14.0
+wonderwords
+easydict
+#flask
+scipy==1.10.1
+h5py
+matplotlib==3.7.4
+tqdm
+PyYAML
+pydub==0.25.1
+
+#av==10.0.0
+#julius==0.2.7
+
+numpy==1.24.4  # ERROR: Failed building wheel for llvmlite
+numba==0.57.1
+librosa==0.10.0
+sox==1.4.1
+simpleaudio==1.0.4
+#moviepy
+
+pydantic==1.10.13
+#lightning==2.0.1
+
+#huggingface_hub==0.16.2
+#fairseq==0.12.2
+#tensorboardX==2.6.2.2
+#audiolm-pytorch==1.1.4
+encodec==0.1.1
+funcy==2.0
+
+# onnx==1.14.0
+# onnxruntime==1.15.1
+# onnxruntime-gpu
+
+pytest
