@@ -1,0 +1,26 @@
+torch==2.0.1
+torchaudio==2.0.2
+soundfile==0.12.1
+fastapi==0.109.2
+python-multipart==0.0.6
+uvicorn[standard]==0.22.0
+pydantic==1.10.12
+path==16.7.1
+easydict==1.10
+python-dotenv==1.0.0
+
+scipy==1.11.1
+numpy==1.25.2
+PyYAML==6.0.1
+timm==0.9.7
+
+# yt-dlp==2023.7.6
+
+SQLAlchemy==2.0.27
+# aiomysql==0.2.0
+
+# flask
+passlib==1.7.4
+PyJWT==2.8.0  # No install "jwt" Reason: https://stackoverflow.com/questions/33198428/jwt-module-object-has-no-attribute-encode
+# alembic==1.12.1
+pymysql==1.1.0

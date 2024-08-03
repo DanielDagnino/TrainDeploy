@@ -1,3 +1,6 @@
+"""
+Generator of the Bark codecs needed to generate custom voices.
+"""
 import argparse
 import sys
 

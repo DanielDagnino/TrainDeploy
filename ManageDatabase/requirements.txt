@@ -1,0 +1,7 @@
+mysqlclient
+mysql-connector-python
+path
+pandas
+pyarrow
+python-dotenv==1.0.0
+passlib==1.7.4

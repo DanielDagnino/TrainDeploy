@@ -1,0 +1,36 @@
+modifiers:
+  MODEL_TYPE: "AudioClf"
+  MODEL_NAME: "beats"
+
+  SR: 16_000
+  SEG_LEN_SEC: 3
+  SEG_LEN_MAX_SEC: null
+  HOP_LEN_SEC: 1
+
+base_out_folder: "{BASE_OUT_FOLDER}"
+log_dir: "{BASE_OUT_FOLDER}"
+cnn_benchmark: true
+seed: null
+
+engine:
+  model:
+    name: "{MODEL_TYPE}"
+    half: false
+    args:
+      n_classes: 1
+      sr: "{SR}"
+      freeze_backbone: false
+      verbose: false
+    backbone:
+      name: "{MODEL_NAME}"
+      args: null
+    resume:
+      load_model_fn: "./apis/clf_ai/model/weights_voice.ckpt"
+
+dataset:
+  name: "DatasetAudioMixerInfer"
+  test:
+    sample_rate: "{SR}"
+    segment_length_sec: "{SEG_LEN_SEC}"
+    segment_length_max_sec: "{SEG_LEN_MAX_SEC}"
+    hop_length_sec: "{HOP_LEN_SEC}"

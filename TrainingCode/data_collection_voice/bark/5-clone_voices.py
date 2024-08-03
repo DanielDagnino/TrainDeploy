@@ -1,3 +1,6 @@
+"""
+Synthetic voice generator based on Bark. It uses custom voices.
+"""
 import argparse
 import datetime
 import hashlib
