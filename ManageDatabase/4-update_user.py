@@ -13,9 +13,9 @@ from path import Path
 load_dotenv()
 
 # Parameters.
-email = "johndoe@domain.ext"
+email = os.getenv('DEMO_USER_EMAIL')
+password = os.getenv('DEMO_USER_PASSWORD')
 organization = 'dagnino'
-password = "DEMO_dagnino_1234"
 usage_deadline_utc = None
 pricing_type = 'PerSec'
 n_requests_max = None

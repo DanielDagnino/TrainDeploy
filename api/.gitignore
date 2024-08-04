@@ -3,7 +3,6 @@
 /submodules
 
 **/tmp*
-logger
 
 *.ckpt
 *.pt

@@ -20,7 +20,7 @@ modifiers:
 
 base_out_folder: "{BASE_OUT_FOLDER}"
 log_dir: "{BASE_OUT_FOLDER}"
-name_save_ckpt: "valid_bark"
+name_save_ckpt: "valid"
 stages_trainer_sorted: ["train", "valid"]
 cnn_benchmark: true
 seed: null
@@ -57,7 +57,7 @@ engine:
   input_type_test: "torch.float32"
 
 train:
-  n_log_interval: 20
+  n_log_interval: 5
   n_save_inter_epoch: "{N_SAVE_INTER_EPOCH}"
   max_epochs: "{MAX_EPOCH}"
   restart_epoch: "{RESTART_EPOCH}"

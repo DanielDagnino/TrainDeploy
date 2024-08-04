@@ -45,7 +45,7 @@ dataset:
     base_dir: "{HOME}/MyData"
     lbl_to_paths: [
       ["no_ai", '/home/razor/MyTmp/TrainDeploy/splits/split_training/non_ai_voices_fns_test.json'],
-      ["ai", '/home/razor/MyTmp/TrainDeploy/splits/split_training/ai_voices_fns_test.json'],
+      ["ai", '/home/razor/MyTmp/TrainDeploy/splits/split_training/ai_voices_fns_test_bark.json'],
     ]
     sample_rate: "{SR}"
     segment_length_sec: "{SEG_LEN_SEC}"

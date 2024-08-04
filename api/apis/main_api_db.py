@@ -37,11 +37,6 @@ torchaudio.set_audio_backend("soundfile")
 
 load_dotenv()
 
-# FIXME:
-# PATH_SSL_CA_CERTIFICATE -> Move to vault
-# JWT_SECRET_KEY -> Move to vault
-# MYSQL_DAGNINO_PASSWORD -> Move to vault
-
 # App limits
 MAX_FILE_SIZE_BYTES = 25 * (1024 ** 2)
 APPLY_EXPIRATION_TIME = False

@@ -67,9 +67,9 @@ except Error as expt:
 print()
 
 # User parameters.
-email = "johndoe@domain.ext"
+email = os.getenv('DEMO_USER_EMAIL')
+password = os.getenv('DEMO_USER_PASSWORD')
 organization = 'myself'
-password = "DEMO_dagnino_1234"
 print(f"password = {password}")
 password_hashed = sha256_crypt.hash(password)
 

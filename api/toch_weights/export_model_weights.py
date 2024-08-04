@@ -10,6 +10,11 @@ from apis.utils.torch.dataparallel import add_module_dataparallel
 
 
 def run(fn_in: Path, fn_out: Path, pretrained_model_fn: Path, fn_out_cfg_pret: Path):
+    fn_in = os.path.expanduser(fn_in)
+    fn_out = os.path.expanduser(fn_out)
+    pretrained_model_fn = os.path.expanduser(pretrained_model_fn)
+    fn_out_cfg_pret = os.path.expanduser(fn_out_cfg_pret)
+
     cfg_pretrained = torch.load(pretrained_model_fn)
     cfg_pretrained = cfg_pretrained['cfg']
     cfg_pretrained["finetuned_model"] = False
@@ -38,13 +43,13 @@ def main(args=None):
                         default='~/MyTmp/TrainDeploy/AudioClf:beats/last.ckpt',
                         type=Path, help='Input file checkpoint')
     parser.add_argument('--pretrained_model_fn',
-                        default='~/MyModelsDwnld/beats/BEATs_iter3_plus_AS2M_finetuned_on_AS2M_cpt2.pt',
+                        default='/media/razor/dagnino/MyBackUpSSD/MyModelsDownload/beats/BEATs_iter3_plus_AS2M_finetuned_on_AS2M_cpt2.pt',
                         type=Path, help='Input file checkpoint')
     parser.add_argument('--fn_out',
-                        default='~/MyProjects/TrainDeploy/api/apis/clf_ai/model/weights_voice.ckpt',
+                        default='~/Dropbox/Dagnino/MyProjects/PortafolioCode/TrainDeploy/api/apis/clf_ai/model/weights_voice_.ckpt',
                         type=Path, help='Output file checkpoint')
     parser.add_argument('--fn_out_cfg_pret',
-                        default='tmp_cfg_pretrained.json',
+                        default='~/Dropbox/Dagnino/MyProjects/PortafolioCode/TrainDeploy/api/apis/clf_ai/model/cfg_pretrained_.json',
                         type=Path, help='Output file checkpoint')
     args = parser.parse_args(args)
     args = vars(args)

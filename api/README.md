@@ -45,9 +45,9 @@ docker tag train_deploy_api:latest train_deploy_api:v1.0.0
 
 Run Test
 ```bash
-docker run -it -p 8000:8000 -e DB_HOST=train-deploy-db.mysql.database.azure.com train_deploy_api:v1.0.0
-docker run -it -p 8000:8000 -e DB_HOST=train-deploy-db.mysql.database.azure.com --entrypoint bash train_deploy_api:v1.0.0
-docker run -it -p 8000:8000 -e DB_HOST=train-deploy-db.mysql.database.azure.com --gpus '"device=0"' train_deploy_api:v1.0.0
+docker run -it -p 8000:8000 -e DB_HOST=<DB_HOST> train_deploy_api:v1.0.0
+docker run -it -p 8000:8000 -e DB_HOST=<DB_HOST> --entrypoint bash train_deploy_api:v1.0.0
+docker run -it -p 8000:8000 -e DB_HOST=<DB_HOST> --gpus '"device=0"' train_deploy_api:v1.0.0
 ```
 
 Debugging: Revise Docker running
@@ -59,3 +59,4 @@ Test
 ```bash
 ./tests/requester.py
 ```
+

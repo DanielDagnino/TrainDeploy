@@ -13,9 +13,9 @@ from path import Path
 load_dotenv()
 
 # Parameters.
-email = "johndoe@domain.ext"
+email = os.getenv('DEMO_USER_EMAIL')
+password = os.getenv('DEMO_USER_PASSWORD')
 organization = 'dagnino'
-password = "DEMO_dagnino_1234"
 # alphabet = string.ascii_letters + string.digits
 # password = ''.join(secrets.choice(alphabet) for _ in range(20))
 usage_deadline_utc = datetime.fromisoformat('3000-12-31T23:59:59')

@@ -120,7 +120,7 @@ print()
 
 # non_ai: LibriSpeech + Voxceleb
 non_ai_voices_dirs = [
-    # ["/media/razor/dagnino/MyBackUpSSD/MyDataDownload/LibriSpeech/train-clean-360", 10, 10, None],
+    ["/media/razor/dagnino/MyBackUpSSD/MyDataDownload/LibriSpeech/train-clean-360", 10, 10, None],
     ["/media/razor/dagnino/MyBackUpSSD/MyDataDownload/LibriSpeech/train-clean-100", 10, 10, None],
 ]
 non_ai_voices_fns_train, non_ai_voices_fns_val, non_ai_voices_fns_test = voice_split_train_val(
