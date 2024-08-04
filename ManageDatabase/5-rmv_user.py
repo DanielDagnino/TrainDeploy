@@ -7,7 +7,7 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-# ***************************************************************************** #
+# Set connection.
 conn = msql.connect(
     user="dagnino",
     password=os.getenv('MYSQL_DAGNINO_PASSWORD'),
@@ -17,8 +17,7 @@ conn = msql.connect(
     # ssl_ca="{ca-cert filename}",
     ssl_disabled=False)
 
-# ***************************************************************************** #
-# Add users.
+# Rmv users.
 try:
     if conn.is_connected():
         cursor = conn.cursor()

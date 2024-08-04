@@ -1,5 +1,5 @@
 # Console: access to MySQL
-# mysql -u root -p
+# mysql -h localhost -u dagnino -p
 
 # Create user + grant access
 CREATE USER 'dagnino'@'localhost' IDENTIFIED BY 'your_password';

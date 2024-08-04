@@ -16,6 +16,7 @@ WORKDIR /home
 COPY apis /home/apis
 COPY submodules /home/submodules
 COPY requirements.txt /home
+COPY DigiCertGlobalRootCA.pem /home
 
 RUN /venv/bin/python3 -m pip install --no-cache-dir --upgrade -r requirements.txt
 
@@ -30,7 +31,7 @@ RUN find . -name "*.egg-info" -exec rm -rf {} + && \
 
 EXPOSE 8000
 
-ENV PYTHONPATH ".:submodules/unilm/beats"
+ENV PYTHONPATH=".:submodules/unilm/beats"
 
 #CMD ["uvicorn", "apis.main:app", "--host", "0.0.0.0", "--port", "8000"]
 #/venv/bin/python3 apis/main_api_db.py

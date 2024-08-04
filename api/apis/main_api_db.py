@@ -5,6 +5,7 @@ from datetime import datetime, timedelta
 from enum import Enum as PyEnum
 from time import sleep
 from typing import Union
+from typing_extensions import Annotated
 
 import jwt
 import torchaudio
@@ -23,7 +24,6 @@ from sqlalchemy.exc import OperationalError
 from sqlalchemy.orm import Session
 from sqlalchemy.orm import declarative_base, sessionmaker
 from sqlalchemy.pool import QueuePool
-from typing_extensions import Annotated
 
 from apis.clf_ai.model.model import predict_is_ai, extractor_ai_voice
 from apis.utils.logger.logger import setup_logging
@@ -54,7 +54,7 @@ ACCESS_TOKEN_EXPIRE_MINUTES = 30
 # MySQL config
 MYSQL_DAGNINO_PASSWORD = os.getenv("MYSQL_DAGNINO_PASSWORD")
 DB_HOST = os.getenv("DB_HOST")
-PATH_SSL_CA_CERTIFICATE = "./DigiCertGlobalRootCA.crt.pem"
+PATH_SSL_CA_CERTIFICATE = "./DigiCertGlobalRootCA.pem"
 DB_CONNECTION_MAX_RETRIES = 3
 
 DATABASE_URL = 'mysql+pymysql://' \
@@ -154,11 +154,8 @@ def create_database_engine_with_retry(max_retries=3):
     retries = 0
     while retries < max_retries:
         try:
-            _engine = create_engine(
-                DATABASE_URL,
-                poolclass=QueuePool, pool_size=5, max_overflow=10, pool_timeout=10,
-                pool_pre_ping=True, pool_use_lifo=True
-            )
+            _engine = create_engine(DATABASE_URL, poolclass=QueuePool, pool_size=5, max_overflow=10, pool_timeout=10,
+                                    pool_pre_ping=True, pool_use_lifo=True)
             return _engine
         except OperationalError as e:
             logger.error(f"Database connection error (retry will be tried): {e}")
@@ -268,14 +265,12 @@ def create_access_token(email: str, db_session: Session):
 
     if APPLY_EXPIRATION_TIME:
         token_expiration_time = datetime.utcnow() + timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
-        token = jwt.encode({
-            'email': email, 'organization': user_db.organization,
-            'token_expiration_time': token_expiration_time.isoformat()
-        }, JWT_SECRET_KEY, algorithm=JWT_ALGORITHM)
+        token = jwt.encode({'email': email, 'organization': user_db.organization,
+                            'token_expiration_time': token_expiration_time.isoformat()}, JWT_SECRET_KEY,
+                           algorithm=JWT_ALGORITHM)
     else:
-        token = jwt.encode({
-            'email': email, 'organization': user_db.organization,
-        }, JWT_SECRET_KEY, algorithm=JWT_ALGORITHM)
+        token = jwt.encode({'email': email, 'organization': user_db.organization, }, JWT_SECRET_KEY,
+                           algorithm=JWT_ALGORITHM)
     return token
 
 
@@ -333,8 +328,8 @@ async def impose_file_size_limit(file: UploadFile = File(...)):
 
 
 @app.post("/login_for_access_token")
-async def login_for_access_token(
-        auth_in: AuthenticationIn, db_session: Session = Depends(get_db)) -> Union[Token, ErrorResponse]:
+async def login_for_access_token(auth_in: AuthenticationIn, db_session: Session = Depends(get_db)) -> Union[
+    Token, ErrorResponse]:
     email = auth_in.email
     password = auth_in.password
     try:
@@ -359,10 +354,8 @@ async def protected_route(current_user: User = Depends(get_and_check_user)) -> P
 
 
 @app.post("/is_voice_ai_gen/")
-async def predict_is_voice_ai_gen(
-        audio_file: UploadFile = File(...),
-        current_user: User = Depends(get_and_check_user), db_session: Session = Depends(get_db)
-) -> Union[PredictionProbOut, ErrorResponse]:
+async def predict_is_voice_ai_gen(audio_file: UploadFile = File(...), current_user: User = Depends(get_and_check_user),
+                                  db_session: Session = Depends(get_db)) -> Union[PredictionProbOut, ErrorResponse]:
     try:
         await impose_file_size_limit(audio_file)
         audio_bytes = await audio_file.read()
@@ -376,10 +369,8 @@ async def predict_is_voice_ai_gen(
 
 
 @app.post("/size_audio/")
-async def size_audio(
-        audio_file: UploadFile = File(...),
-        current_user: User = Depends(get_and_check_user), db_session: Session = Depends(get_db)
-) -> Union[FileSizeOut, ErrorResponse]:
+async def size_audio(audio_file: UploadFile = File(...), current_user: User = Depends(get_and_check_user),
+                     db_session: Session = Depends(get_db)) -> Union[FileSizeOut, ErrorResponse]:
     try:
         await impose_file_size_limit(audio_file)
         audio_bytes = await audio_file.read()
@@ -392,7 +383,11 @@ async def size_audio(
         return ErrorResponse(error="Internal error")
 
 
-if __name__ == "__main__":
+def main():
     host = os.getenv("APP_HOST", "0.0.0.0")
     port = os.getenv("APP_PORT", 8000)
     uvicorn.run("apis.main_api_db:app", host=host, port=int(port), reload=True)
+
+
+if __name__ == "__main__":
+    main()

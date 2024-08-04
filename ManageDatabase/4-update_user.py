@@ -12,7 +12,6 @@ from path import Path
 
 load_dotenv()
 
-# ***************************************************************************** #
 # Parameters.
 email = "johndoe@domain.ext"
 organization = 'dagnino'
@@ -28,7 +27,7 @@ if password is not None:
 else:
     password_hashed = None
 
-# ***************************************************************************** #
+# Save user data in a JSON.
 data = json.load(open("users.json")) if Path("users.json").exists() else dict()
 data[email] = {
     "email": email,
@@ -41,7 +40,7 @@ data[email] = {
 }
 json.dump(data, open("users.json", "w"), indent=4)
 
-# ***************************************************************************** #
+# Set connection.
 conn = msql.connect(
     user="dagnino",
     password=os.getenv('MYSQL_DAGNINO_PASSWORD'),
@@ -49,7 +48,6 @@ conn = msql.connect(
     port=3306,
     ssl_disabled=False)
 
-# ***************************************************************************** #
 # Update users.
 try:
     if conn.is_connected():

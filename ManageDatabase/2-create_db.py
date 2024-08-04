@@ -7,7 +7,7 @@ from passlib.hash import sha256_crypt
 
 load_dotenv()
 
-# ***************************************************************************** #
+# Set connection.
 conn = msql.connect(
     user="dagnino",
     password=os.getenv('MYSQL_DAGNINO_PASSWORD'),
@@ -20,15 +20,6 @@ conn = msql.connect(
 #     user='dagnino',
 #     password=os.getenv('MYSQL_DAGNINO_PASSWORD'))
 
-# ***************************************************************************** #
-# Parameters.
-email = "johndoe@domain.ext"
-organization = 'myself'
-password = "DEMO_dagnino_1234"
-print(f"password = {password}")
-password_hashed = sha256_crypt.hash(password)
-
-# ***************************************************************************** #
 # Create db if it does not exist.
 try:
     if conn.is_connected():
@@ -42,7 +33,6 @@ except Error as expt:
     print(expt)
 print()
 
-# ***************************************************************************** #
 # Create table if not exists.
 try:
     if conn.is_connected():
@@ -76,7 +66,13 @@ except Error as expt:
     print(expt)
 print()
 
-# ***************************************************************************** #
+# User parameters.
+email = "johndoe@domain.ext"
+organization = 'myself'
+password = "DEMO_dagnino_1234"
+print(f"password = {password}")
+password_hashed = sha256_crypt.hash(password)
+
 # Add users.
 try:
     if conn.is_connected():
