@@ -1,0 +1,118 @@
+name: API Pipeline
+
+on:
+  push:
+    branches:
+      - feature/*
+      - dev
+      - main
+
+jobs:
+  test:
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+        with:
+          submodules: true
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10.12'
+
+      - name: Cache pip
+        uses: actions/cache@v3
+        with:
+          path: ~/.cache/pip
+          key: ${{ runner.os }}-pip-${{ hashFiles('api/requirements.txt') }}
+          restore-keys: |
+            ${{ runner.os }}-pip-
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r api/requirements.txt
+          pip install pytest
+
+      - name: Install submodules
+        run: |
+          cd api
+          git init
+          mkdir submodules
+          cd submodules
+          git submodule add --force https://github.com/microsoft/unilm.git
+
+      - name: Install Azure CLI
+        run: |
+          curl -sL https://aka.ms/InstallAzureCLIDeb | sudo bash
+
+      - name: Download test data from Azure Blob Storage
+        run: |
+          mkdir -p api/apis_tests/tmp_data
+          az storage blob download-batch -d api/apis_tests/tmp_data --account-name ${{ secrets.AZURE_STORAGE_ACCOUNT }} --account-key ${{ secrets.AZURE_STORAGE_KEY }} -s test-data
+
+      - name: Download checkpoints from Azure Blob Storage
+        run: |
+          az storage blob download-batch -d api/apis/clf_ai/model --account-name ${{ secrets.AZURE_STORAGE_ACCOUNT }} --account-key ${{ secrets.AZURE_STORAGE_KEY }} -s dev-checkpoints --overwrite
+
+      - name: Run tests
+        run: |
+          cd api
+          export PYTHONPATH=.:..:submodules/unilm/beats
+          export DB_HOST=train-deploy-db.mysql.database.azure.com
+          pytest apis_tests
+
+      - name: Debug server startup
+        if: failure()
+        run: |
+          dmesg | tail -200
+          journalctl -xe | tail -200
+
+      - name: Print server logs on failure
+        if: failure()
+        run: |
+          cat /tmp/uvicorn.log || echo "No server logs found"
+
+#  build-and-push-dev:
+#    if: github.ref == 'refs/heads/dev'
+#    runs-on: ubuntu-22.04
+#    needs: test
+#    steps:
+#      - name: Checkout code
+#        uses: actions/checkout@v3
+#
+#      - name: Log in to Azure Container Registry
+#        uses: azure/docker-login@v1
+#        with:
+#          login-server: <your-dev-registry-name>.azurecr.io
+#          username: ${{ secrets.AZURE_CR_DEV_USERNAME }}
+#          password: ${{ secrets.AZURE_CR_DEV_PASSWORD }}
+#
+#      - name: Build Docker image
+#        run: docker build -t <your-dev-registry-name>.azurecr.io/your-app:latest -f api/Dockerfile .
+#
+#      - name: Push Docker image
+#        run: docker push <your-dev-registry-name>.azurecr.io/your-app:latest
+#
+#  build-and-push-prod:
+#    if: github.ref == 'refs/heads/master'
+#    runs-on: ubuntu-22.04
+#    needs: test
+#    steps:
+#      - name: Checkout code
+#        uses: actions/checkout@v3
+#
+#      - name: Log in to Azure Container Registry
+#        uses: azure/docker-login@v1
+#        with:
+#          login-server: <your-prod-registry-name>.azurecr.io
+#          username: ${{ secrets.AZURE_CR_PROD_USERNAME }}
+#          password: ${{ secrets.AZURE_CR_PROD_PASSWORD }}
+#
+#      - name: Build Docker image
+#        run: docker build -t <your-prod-registry-name>.azurecr.io/your-app:latest -f api/Dockerfile .
+#
+#      - name: Push Docker image
+#        run: docker push <your-prod-registry-name>.azurecr.io/your-app:latest

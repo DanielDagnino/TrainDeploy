@@ -1,0 +1,6 @@
+[submodule "api/unilm"]
+	path = api/unilm
+	url = https://github.com/microsoft/unilm.git
+[submodule "api/submodules/unilm"]
+	path = api/submodules/unilm
+	url = https://github.com/microsoft/unilm.git

@@ -26,17 +26,20 @@ from sqlalchemy.orm import declarative_base, sessionmaker
 from sqlalchemy.pool import QueuePool
 
 from apis.clf_ai.model.model import predict_is_ai, extractor_ai_voice
-from apis.utils.logger.logger import setup_logging
-
-log_dir = Path('./logger')
-log_dir.makedirs_p()
-setup_logging(log_dir=log_dir, logger_level=logging.WARNING, production=True, rank=None)
+# from apis.utils.logger.logger import setup_logging
+#
+# log_dir = Path('./logger')
+# log_dir.makedirs_p()
+# setup_logging(log_dir=log_dir, logger_level=logging.WARNING, production=True, rank=None)
 logger = logging.getLogger(__name__ + ": " + __file__)
 
+logger.exception("torchaudio.set_audio_backend")
 torchaudio.set_audio_backend("soundfile")
 
+logger.exception("load_dotenv")
 load_dotenv()
 
+logger.exception("variables")
 # App limits
 MAX_FILE_SIZE_BYTES = 25 * (1024 ** 2)
 APPLY_EXPIRATION_TIME = False
@@ -55,6 +58,7 @@ DB_CONNECTION_MAX_RETRIES = 3
 DATABASE_URL = 'mysql+pymysql://' \
                f'dagnino:{MYSQL_DAGNINO_PASSWORD}@{DB_HOST}:3306/TrainDeploy_API_DB?ssl_ca={PATH_SSL_CA_CERTIFICATE}'
 
+logger.exception("FastAPI")
 app = FastAPI()
 fastapi_logger.setLevel(logging.WARNING)
 
@@ -284,25 +288,23 @@ def add_requests_count(current_user: User, duration: float, db_session: Session)
 def get_and_check_user(access_token: str = Depends(oauth2_scheme), db_session: Session = Depends(get_db)) -> User:
     try:
         decoded_token = jwt.decode(access_token, JWT_SECRET_KEY, algorithms=[JWT_ALGORITHM])
-
-        email = decoded_token['email']
-        token_expiration_time = decoded_token.get('token_expiration_time', None)
-
-        if token_expiration_time is not None and datetime.utcnow() > datetime.fromisoformat(token_expiration_time):
-            msg = "Token has expired"
-            logger.error(msg)
-            raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail=msg)
-
-        verify_user_usage_limits(email, db_session)
-        verify_user_time_limit(email, db_session)
-
-        organization = decoded_token['organization']
-        return User(email=email, organization=organization)
-
     except jwt.DecodeError:
         msg = "Invalid token"
         logger.error(msg)
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail=msg)
+
+    token_expiration_time = decoded_token.get('token_expiration_time', None)
+    if token_expiration_time is not None and datetime.utcnow() > datetime.fromisoformat(token_expiration_time):
+        msg = "Token has expired"
+        logger.error(msg)
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail=msg)
+
+    email = decoded_token['email']
+    verify_user_usage_limits(email, db_session)
+    verify_user_time_limit(email, db_session)
+
+    organization = decoded_token['organization']
+    return User(email=email, organization=organization)
 
 
 async def impose_file_size_limit(file: UploadFile = File(...)):

@@ -120,6 +120,8 @@ class Initiate:
         if self.cfg.cnn_benchmark:
             cudnn.benchmark = True
 
+        self.logger.info('Initialized Initiate')
+
     def split_array(self, x, n_seg, n_hop):
         segments = []
         idx = 0
