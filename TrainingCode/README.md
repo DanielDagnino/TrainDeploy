@@ -4,7 +4,7 @@
 
 
 ## Installation
-* Data collection/generation:
+* Data collection/generation environment:
 ```bash
 cd <PATH_TO_TrainDeploy>/TrainingCode
 mkvirtualenv DataGeneration -p python3.8.19
@@ -15,7 +15,7 @@ export PYTHONPATH=.:submodules/bark-with-voice-clone
 python -m spacy download en_core_web_sm
 ```
 
-* Training:
+* Training environment:
 ```bash
 cd <PATH_TO_TrainDeploy>/TrainingCode
 mkvirtualenv TrainDeploy -p python3.10
@@ -29,25 +29,25 @@ Download `LibriSpeech`:
 
 Create a list of sentences with a minimum complexity and length.
 ```bash
-1-select_sentences.py
+python 1-select_sentences.py
 ```
 
 Synthetic voice generator based on Bark. It uses the default Bark's voices.
 ```bash
-3-gen_voices.py
+python 3-gen_voices.py
 ```
 
 Generator of the Bark codecs needed to generate custom voices.
 ```bash
-4-codecs_to_clone_voices.py
+python 4-codecs_to_clone_voices.py
 ```
 
 Generate custom voices.
 ```bash
-5-clone_voices.py
+python 5-clone_voices.py
 ```
 
 ## Train a model with the created dataset
 ```bash
-python 5-clone_voices.py "cfg_file.json"
+python cli/train_clf.py "cfg/train_clf.yaml"
 ```

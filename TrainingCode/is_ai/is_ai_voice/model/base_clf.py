@@ -225,6 +225,9 @@ class AudioClf(BaseModel):
         nd = self.n_backbone_features
 
         fbank = self.preprocessor(x)
+
+        a = 1 / 0
+
         self.print(f"preprocessor > {fbank.shape}")
 
         out = self.backbone_forward(fbank)
@@ -298,7 +301,7 @@ if __name__ == "__main__":
                 },
             },
             "resume": {
-                "pretrained_model_fn": "/home/razor/Dropbox/Dagnino/MyModelsDownload/beats/BEATs_iter3_plus_AS2M_finetuned_on_AS2M_cpt2.pt"
+                "pretrained_model_fn": "/media/razor/dagnino/MyBackUpSSD/MyModelsDownload/beats/BEATs_iter3_plus_AS2M_finetuned_on_AS2M_cpt2.pt"
             },
         }
 
