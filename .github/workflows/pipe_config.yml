@@ -67,8 +67,8 @@ jobs:
       - name: Debug server startup
         if: failure()
         run: |
-          dmesg | tail -200
-          journalctl -xe | tail -200
+          dmesg | tail -20
+          journalctl -xe | tail -20
 
       - name: Print server logs on failure
         if: failure()

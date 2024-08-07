@@ -26,20 +26,20 @@ from sqlalchemy.orm import declarative_base, sessionmaker
 from sqlalchemy.pool import QueuePool
 
 from apis.clf_ai.model.model import predict_is_ai, extractor_ai_voice
-# from apis.utils.logger.logger import setup_logging
-#
-# log_dir = Path('./logger')
-# log_dir.makedirs_p()
-# setup_logging(log_dir=log_dir, logger_level=logging.WARNING, production=True, rank=None)
+from apis.utils.logger.logger import setup_logging
+
+log_dir = Path('./logger')
+log_dir.makedirs_p()
+setup_logging(log_dir=log_dir, logger_level=logging.WARNING, production=True, rank=None)
 logger = logging.getLogger(__name__ + ": " + __file__)
 
-logger.exception("torchaudio.set_audio_backend")
+logger.info("torchaudio.set_audio_backend")
 torchaudio.set_audio_backend("soundfile")
 
-logger.exception("load_dotenv")
+logger.info("load_dotenv")
 load_dotenv()
 
-logger.exception("variables")
+logger.info("variables")
 # App limits
 MAX_FILE_SIZE_BYTES = 25 * (1024 ** 2)
 APPLY_EXPIRATION_TIME = False
@@ -58,7 +58,7 @@ DB_CONNECTION_MAX_RETRIES = 3
 DATABASE_URL = 'mysql+pymysql://' \
                f'dagnino:{MYSQL_DAGNINO_PASSWORD}@{DB_HOST}:3306/TrainDeploy_API_DB?ssl_ca={PATH_SSL_CA_CERTIFICATE}'
 
-logger.exception("FastAPI")
+logger.info("FastAPI")
 app = FastAPI()
 fastapi_logger.setLevel(logging.WARNING)
 
@@ -329,10 +329,11 @@ async def login_for_access_token(auth_in: AuthenticationIn, db_session: Session 
     Token, ErrorResponse]:
     email = auth_in.email
     password = auth_in.password
+
+    verify_password(email, password, db_session)
+    verify_user_time_limit(email, db_session)
+    verify_user_usage_limits(email, db_session)
     try:
-        verify_password(email, password, db_session)
-        verify_user_time_limit(email, db_session)
-        verify_user_usage_limits(email, db_session)
         access_token = create_access_token(email, db_session)
         return Token(access_token=access_token, token_type="bearer")
     except HTTPException as http_exc:
@@ -383,7 +384,7 @@ async def size_audio(audio_file: UploadFile = File(...), current_user: User = De
 def main():
     host = os.getenv("APP_HOST", "0.0.0.0")
     port = os.getenv("APP_PORT", 8000)
-    uvicorn.run("apis.main_api_db:app", host=host, port=int(port), reload=True)
+    uvicorn.run("apis.main_api_db:app", host=host, port=int(port), workers=1, reload=False)
 
 
 if __name__ == "__main__":
