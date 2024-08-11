@@ -16,6 +16,8 @@ _CFG_AI_VOICE = EasyDict(cfg_fn="./apis/clf_ai/model/cfg_infer_voice.yaml")
 _SMOOTH = 1
 _BATCH_SIZE = 1
 
+_logger = logging.getLogger(__name__ + ': ' + inspect.currentframe().f_code.co_name)
+_logger.info('Start Initiate')
 extractor_ai_voice = Initiate(io_file=None, args=_CFG_AI_VOICE, cfg_beats_pretr_fn=_CFG_BEATS_PRETR_FN)
 
 
@@ -23,7 +25,10 @@ def predict_is_ai(io_file, extractor) -> Tuple[float, float]:
     logger = logging.getLogger(__name__ + ': ' + inspect.currentframe().f_code.co_name)
 
     with torch.no_grad():
+        logger.info('Start extractor.dataset')
         extractor.dataset = DatasetAudioMixerInfer(io_file=io_file, **extractor.cfg.dataset.get("test"))
+
+        logger.info('Start processing audio')
         for audio, duration in extractor.dataset:
             try:
                 segs = audio.detach().requires_grad_(requires_grad=False)
@@ -45,3 +50,4 @@ def predict_is_ai(io_file, extractor) -> Tuple[float, float]:
             except Exception as expt:
                 logger.error(expt)
                 return -1, duration
+        logger.info('End processing audio')

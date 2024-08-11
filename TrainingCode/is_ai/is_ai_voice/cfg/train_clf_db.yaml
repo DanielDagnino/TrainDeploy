@@ -1,8 +1,8 @@
 modifiers:
   HOME: "{HOME}"
-  BASE_OUT_FOLDER: "{HOME}/MyTmp/TrainDeploy/DeepFakeVoiceDetector/AudioClf:beats/test_{TIME}"
-  BATCH_SIZE: 36
-  NUM_WORKERS: 36
+  BASE_OUT_FOLDER: "{HOME}/MyTmp/TrainDeploy/DeepFakeVoiceDetector/debug_AudioClf:beats/test_{TIME}"
+  BATCH_SIZE: 8
+  NUM_WORKERS: 1
   MAX_EPOCH: 10
   RESTART_EPOCH: true
   N_SAVE_INTER_EPOCH: 1_000_000
@@ -45,8 +45,8 @@ engine:
       args: null
     resume:
       pretrained_model_fn: '/media/razor/dagnino/MyBackUpSSD/MyModelsDownload/beats/BEATs_iter3_plus_AS2M_finetuned_on_AS2M_cpt2.pt'
-      save_tmp_model_fn: "{HOME}/MyTmp/TrainDeploy/DeepFakeVoiceDetector/AudioClf:beats/tmp_model.ckpt"
-      load_model_fn: "{HOME}/MyTmp/TrainDeploy/DeepFakeVoiceDetector/AudioClf:beats/tmp_model.ckpt"
+      save_tmp_model_fn: "{HOME}/MyTmp/TrainDeploy/DeepFakeVoiceDetector/debug_AudioClf:beats/tmp_model.ckpt"
+      load_model_fn: "{HOME}/MyTmp/TrainDeploy/DeepFakeVoiceDetector/debug_AudioClf:beats/tmp_model.ckpt"
       save_model_dir: "{BASE_OUT_FOLDER}/models"
       load_optimizer: true
       load_scheduler: false
@@ -86,13 +86,13 @@ dataset:
   train:
     # repeat, reduce, paths
     non_ai_voices_paths: [
-      [1, 1, '/home/razor/MyTmp/TrainDeploy/splits/split_training/non_ai_voices_fns_train.json'],
+      [1, 1, '/home/razor/MyTmp/TrainDeploy/splits/split_training_db/non_ai_voices_fns_train.json'],
       ]
     ai_voices_paths: [
-      [1, 1, '/home/razor/MyTmp/TrainDeploy/splits/split_training/ai_voices_fns_train_bark.json'],
+      [1, 1, '/home/razor/MyTmp/TrainDeploy/splits/split_training_db/ai_voices_fns_train_bark.json'],
     ]
     noise_paths: [
-      [1, 1, '/home/razor/MyTmp/TrainDeploy/splits/split_training/augment_train.json']
+      [1, 1, '/home/razor/MyTmp/TrainDeploy/splits/split_training_db/augment_train.json']
     ]
     sample_rate: "{SR}"
     speed: 0.
@@ -103,13 +103,13 @@ dataset:
     n_segments_per_sample: "{N_SEG_PER_SAMPLE}"
   valid:
     non_ai_voices_paths: [
-      [1, 1, '/home/razor/MyTmp/TrainDeploy/splits/split_training/non_ai_voices_fns_train.json']
+      [1, 1, '/home/razor/MyTmp/TrainDeploy/splits/split_training_db/non_ai_voices_fns_train.json']
     ]
     ai_voices_paths: [
-      [1, 1, '/home/razor/MyTmp/TrainDeploy/splits/split_training/ai_voices_fns_train_bark.json']
+      [1, 1, '/home/razor/MyTmp/TrainDeploy/splits/split_training_db/ai_voices_fns_train_bark.json']
     ]
     noise_paths: [
-      [1, 1, '/home/razor/MyTmp/TrainDeploy/splits/split_training/augment_val.json']
+      [1, 1, '/home/razor/MyTmp/TrainDeploy/splits/split_training_db/augment_val.json']
     ]
     sample_rate: "{SR}"
     speed: 0.
